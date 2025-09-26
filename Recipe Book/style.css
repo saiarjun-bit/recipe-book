@@ -1,0 +1,22 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.recipe-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+    height: 100%;
+    /* Ensures uniform height in a row */
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+}
+
+.recipe-card .card-img-top {
+    height: 200px;
+    /* Fixed height for images */
+    object-fit: cover;
+    /* Ensures images cover the area without distortion */
+}

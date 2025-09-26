@@ -1,0 +1,101 @@
+$(document).ready(function() {
+    const recipes = [{
+            id: 1,
+            title: "Spaghetti Carbonara",
+            category: "Italian",
+            ingredients: ["Spaghetti", "Eggs", "Pancetta", "Parmesan cheese", "Black pepper"],
+            steps: "Cook spaghetti. Fry pancetta. Whisk eggs with cheese and pepper. Combine hot spaghetti with egg mixture and pancetta.",
+            image: "https://via.placeholder.com/400x200/FF5733/FFFFFF?text=Carbonara"
+        },
+        {
+            id: 2,
+            title: "Tacos al Pastor",
+            category: "Mexican",
+            ingredients: ["Pork", "Pineapple", "Onion", "Cilantro", "Tortillas"],
+            steps: "Marinate pork, grill with pineapple. Serve in tortillas with onion and cilantro.",
+            image: "https://via.placeholder.com/400x200/33FF57/FFFFFF?text=Tacos"
+        },
+        {
+            id: 3,
+            title: "Chicken Tikka Masala",
+            category: "Asian",
+            ingredients: ["Chicken", "Yogurt", "Spices", "Tomato sauce", "Cream"],
+            steps: "Marinate and grill chicken. Cook in a creamy tomato sauce.",
+            image: "https://via.placeholder.com/400x200/3357FF/FFFFFF?text=Tikka+Masala"
+        },
+        {
+            id: 4,
+            title: "Margherita Pizza",
+            category: "Italian",
+            ingredients: ["Pizza dough", "Tomato sauce", "Mozzarella", "Basil"],
+            steps: "Spread sauce on dough, add mozzarella and basil. Bake until crust is golden.",
+            image: "https://via.placeholder.com/400x200/FFFF33/000000?text=Pizza"
+        }
+    ];
+
+    function displayRecipes(filteredRecipes) {
+        $("#recipeList").empty();
+        if (filteredRecipes.length === 0) {
+            $("#recipeList").append('<div class="col"><p>No recipes found matching your criteria.</p></div>');
+            return;
+        }
+
+        filteredRecipes.forEach(recipe => {
+            const recipeCard = `
+                <div class="col">
+                    <div class="card h-100 recipe-card" data-id="${recipe.id}">
+                        <img src="${recipe.image}" class="card-img-top" alt="${recipe.title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${recipe.title}</h5>
+                            <p class="card-text">${recipe.category}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $("#recipeList").append(recipeCard);
+        });
+    }
+
+    // Initial display of all recipes
+    displayRecipes(recipes);
+
+    // Search functionality
+    $("#recipeSearch").on("keyup", function() {
+        const searchTerm = $(this).val().toLowerCase();
+        const filtered = recipes.filter(recipe =>
+            recipe.title.toLowerCase().includes(searchTerm) ||
+            recipe.category.toLowerCase().includes(searchTerm) ||
+            recipe.ingredients.some(ingredient => ingredient.toLowerCase().includes(searchTerm))
+        );
+        displayRecipes(filtered);
+    });
+
+    // Filter by Category
+    $(".filter-btn").on("click", function(e) {
+        e.preventDefault();
+        const category = $(this).data("category");
+        if (category === "All") {
+            displayRecipes(recipes);
+        } else {
+            const filtered = recipes.filter(recipe => recipe.category === category);
+            displayRecipes(filtered);
+        }
+    });
+
+    // Display Recipe Details in Modal
+    $("#recipeList").on("click", ".recipe-card", function() {
+        const recipeId = $(this).data("id");
+        const recipe = recipes.find(r => r.id === recipeId);
+
+        if (recipe) {
+            $("#modalRecipeTitle").text(recipe.title);
+            $("#modalRecipeImage").attr("src", recipe.image);
+            $("#modalRecipeIngredients").empty();
+            recipe.ingredients.forEach(ingredient => {
+                $("#modalRecipeIngredients").append(`<li>${ingredient}</li>`);
+            });
+            $("#modalRecipeSteps").text(recipe.steps);
+            $("#recipeDetailModal").modal("show");
+        }
+    });
+});
